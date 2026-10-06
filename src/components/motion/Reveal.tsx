@@ -36,12 +36,15 @@ export function RevealText({
   delay = 0,
   as = "h2",
   immediate = false,
+  play = true,
 }: {
   text: string;
   className?: string;
   delay?: number;
   as?: "h1" | "h2" | "h3" | "p" | "span";
   immediate?: boolean;
+  /** With `immediate`, hold the hidden state until this becomes true (e.g. after the intro loader). */
+  play?: boolean;
 }) {
   const reduce = useReducedMotion();
   const Tag = as;
@@ -56,7 +59,7 @@ export function RevealText({
           <m.span
             className="inline-block will-change-transform"
             initial={hidden}
-            {...(immediate ? { animate: visible } : { whileInView: visible, viewport: { once: true } })}
+            {...(immediate ? { animate: play ? visible : hidden } : { whileInView: visible, viewport: { once: true } })}
             transition={{ duration: 0.9, ease: EASE, delay: delay + i * 0.06 }}
           >
             {w}

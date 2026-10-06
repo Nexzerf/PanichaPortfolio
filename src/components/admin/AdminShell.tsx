@@ -3,6 +3,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { signOut } from "@/app/admin/actions";
+import { Logo } from "../Logo";
 
 const NAV = [
   { href: "/admin", label: "Overview" },
@@ -29,7 +30,7 @@ export function AdminShell({ email, unread, children }: { email: string; unread:
       >
         <div className="flex h-full flex-col">
           <Link href="/admin" className="mb-8 flex items-center gap-2 font-display text-sm">
-            <span className="grid size-7 place-items-center rounded-full border border-line-strong font-serif italic">P</span>
+            <Logo size={28} />
             Portfolio Admin
           </Link>
           <nav aria-label="Admin">
@@ -81,7 +82,7 @@ export function AdminShell({ email, unread, children }: { email: string; unread:
           >
             Menu
           </button>
-          <span className="font-display text-sm">Portfolio Admin</span>
+          <span className="flex items-center gap-2 font-display text-sm"><Logo size={22} />Portfolio Admin</span>
         </div>
         <main id="main" className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-8 lg:py-12">
           {children}

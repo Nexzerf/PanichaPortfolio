@@ -127,14 +127,17 @@ video {
   max-width: 100%;
 }
 
-/* Thai text needs a touch more leading than Latin display type */
-:lang(th) {
-  line-height: 1.75;
-}
-:lang(th) .font-display,
-.font-display:lang(th) {
-  line-height: 1.12;
-  letter-spacing: 0;
+/* Thai text needs a touch more leading than Latin display type.
+   Kept in the base layer so Tailwind utilities (leading-*, h-*) still win where set explicitly. */
+@layer base {
+  :lang(th) {
+    line-height: 1.75;
+  }
+  :lang(th) .font-display,
+  .font-display:lang(th) {
+    line-height: 1.12;
+    letter-spacing: 0;
+  }
 }
 
 /* ──────────────────────────────────────────────────────────────
@@ -216,6 +219,21 @@ video {
 @keyframes drift {
   from { transform: translate3d(0, -100%, 0); }
   to { transform: translate3d(0, 200%, 0); }
+}
+
+/* Intro loader: skipped on repeat visits (attribute set before paint), and never stuck if JS fails */
+html[data-intro-seen] #intro-loader {
+  display: none;
+}
+#intro-loader {
+  animation: intro-failsafe 0.6s ease 6s forwards;
+}
+@keyframes intro-failsafe {
+  to {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
 }
 
 /* Custom cursor (public site, fine pointers only): hide the native arrow, keep the text caret */

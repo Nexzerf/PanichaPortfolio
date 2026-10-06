@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { LangSwitch } from "./LangSwitch";
+import { Logo } from "../Logo";
 import type { Lang, SocialLink } from "@/lib/types";
 
 export function Footer({
@@ -20,7 +21,7 @@ export function Footer({
     <footer className="relative overflow-hidden border-t border-line">
       <div className="container-x flex flex-col gap-10 py-14 md:flex-row md:items-end md:justify-between">
         <div className="space-y-3">
-          <p className="font-display text-2xl font-light">{name}</p>
+          <p className="flex items-center gap-3 font-display text-2xl font-light"><Logo size={36} />{name}</p>
           {note && <p className="max-w-sm text-sm text-ink-3">{note}</p>}
           <p className="text-xs text-ink-3">
             © {year} {name}. {labels.rights}

@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import { AnimatePresence, m } from "motion/react";
 import { useEffect, useState } from "react";
 import { LangSwitch } from "./LangSwitch";
+import { Logo } from "../Logo";
 import type { Lang } from "@/lib/types";
 
 type NavItem = { href: string; section: string; label: string };
@@ -79,23 +80,18 @@ export function Nav({
       <header className="fixed inset-x-0 top-0 z-50 px-3 pt-3 sm:px-5 sm:pt-4">
         <nav
           aria-label="Primary"
-          className={`mx-auto flex h-14 max-w-[var(--container)] items-center justify-between rounded-full border px-3 pl-5 transition-[background-color,border-color,box-shadow] duration-500 sm:h-[60px] ${
+          className={`relative mx-auto flex h-14 max-w-[var(--container)] items-center justify-between rounded-full border px-3 pl-5 transition-[background-color,border-color,box-shadow] duration-500 sm:h-[60px] ${
             scrolled
               ? "border-line bg-[#070b1f]/95 shadow-[0_10px_40px_-20px_rgb(0_0_0/0.9)]"
               : "border-transparent bg-transparent"
           }`}
         >
-          <Link href="/" className="group flex items-center gap-2.5 font-display text-sm font-medium tracking-wide">
-            <span
-              aria-hidden
-              className="grid size-7 place-items-center rounded-full border border-line-strong font-serif text-base italic transition-colors duration-300 group-hover:border-accent group-hover:text-accent"
-            >
-              {brand.charAt(0)}
-            </span>
+          <Link href="/" className="group flex h-10 items-center gap-2.5 font-display text-sm font-medium leading-none tracking-wide">
+            <Logo size={30} className="transition-transform duration-500 ease-[var(--ease-out)] group-hover:-rotate-6 group-hover:scale-110" />
             <span>{brand}</span>
           </Link>
 
-          <ul className="hidden items-center gap-1 md:flex">
+          <ul className="hidden items-center gap-1 md:absolute md:left-1/2 md:flex md:-translate-x-1/2">
             {items.map((item) => {
               const active = isActive(item);
               return (
@@ -103,7 +99,7 @@ export function Nav({
                   <Link
                     href={item.href}
                     aria-current={active ? "page" : undefined}
-                    className={`relative z-10 block rounded-full px-4 py-2 font-display text-sm transition-colors duration-300 ${
+                    className={`relative z-10 inline-flex h-9 items-center rounded-full px-4 font-display text-sm leading-none transition-colors duration-300 ${
                       active ? "text-ink" : "text-ink-2 hover:text-ink"
                     }`}
                   >
@@ -125,7 +121,7 @@ export function Nav({
             <LangSwitch lang={lang} label={labels.lang} className="hidden sm:flex" />
             <Link
               href="/#contact"
-              className="hidden rounded-full bg-accent px-5 py-2.5 font-display text-sm font-medium text-white shadow-[0_0_30px_-6px_var(--accent)] transition-transform duration-300 hover:-translate-y-0.5 md:inline-block"
+              className="hidden h-10 items-center rounded-full bg-accent px-5 font-display text-sm font-medium leading-none text-white shadow-[0_0_30px_-6px_var(--accent)] transition-transform duration-300 hover:-translate-y-0.5 md:inline-flex"
             >
               {items.find((i) => i.section === "contact")?.label}
             </Link>
@@ -185,7 +181,7 @@ export function Nav({
             </ul>
             <div className="relative mt-auto flex items-center justify-between">
               <LangSwitch lang={lang} label={labels.lang} />
-              <span className="kicker">{brand}</span>
+              <span className="kicker flex items-center gap-2"><Logo size={20} />{brand}</span>
             </div>
           </m.div>
         )}

@@ -4,6 +4,8 @@ import { getSiteSettings } from "@/lib/data";
 import { getLang } from "@/lib/i18n/server";
 import { pick } from "@/lib/i18n/pick";
 import { siteUrl } from "@/lib/site";
+import Script from "next/script";
+import { INTRO_SEEN_SCRIPT } from "@/lib/intro";
 import "./globals.css";
 
 const display = Anuphan({
@@ -58,11 +60,19 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const [settings, lang] = await Promise.all([getSiteSettings(), getLang()]);
   return (
     <html
+      // The intro script below may add data-intro-seen before hydration.
+      suppressHydrationWarning
       lang={lang}
       className={`${display.variable} ${body.variable} ${serif.variable}`}
       style={{ "--accent": settings.accent_color } as React.CSSProperties}
     >
-      <body>{children}</body>
+      <body>
+        {/* Static string, no user input: lets repeat visits skip the intro overlay before first paint */}
+        <Script id="intro-seen" strategy="beforeInteractive">
+          {INTRO_SEEN_SCRIPT}
+        </Script>
+        {children}
+      </body>
     </html>
   );
 }
