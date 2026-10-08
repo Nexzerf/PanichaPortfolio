@@ -33,7 +33,7 @@ const DEFAULT_SETTINGS: SiteSettings = {
 };
 
 const PUBLIC_PROJECT_COLUMNS =
-  "id, slug, title_th, title_en, short_th, short_en, overview_th, overview_en, problem_th, problem_en, solution_th, solution_en, my_role_th, my_role_en, process_th, process_en, features_th, features_en, result_th, result_en, awards_th, awards_en, role_th, role_en, year, team_size, tools, tags, thumbnail_url, hero_url, video_url, github_url, demo_url, external_url, status, featured, sort_order, seo_title_th, seo_title_en, seo_description_th, seo_description_en, og_image_url, created_at, updated_at, published_at";
+  "id, slug, title_th, title_en, short_th, short_en, overview_th, overview_en, problem_th, problem_en, solution_th, solution_en, my_role_th, my_role_en, process_th, process_en, features_th, features_en, result_th, result_en, awards_th, awards_en, role_th, role_en, year, team_size, tools, tags, thumbnail_url, hero_url, video_url, video_width, video_height, github_url, demo_url, external_url, status, featured, sort_order, seo_title_th, seo_title_en, seo_description_th, seo_description_en, og_image_url, created_at, updated_at, published_at";
 
 const db = () => createPublicClient();
 

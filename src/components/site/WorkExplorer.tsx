@@ -1,15 +1,17 @@
 "use client";
-import Link from "next/link";
 import { AnimatePresence, m } from "motion/react";
 import { useMemo, useState } from "react";
-import { Media } from "./Media";
-import { pick, pickLang } from "@/lib/i18n/pick";
+import { ProjectCard } from "./ProjectCard";
+import { ProjectLightbox } from "./ProjectLightbox";
+import { isVideoFile, videoEmbed } from "@/lib/site";
+import type { WorkLabels } from "@/lib/i18n/dictionary";
+import { pick } from "@/lib/i18n/pick";
 import type { Category, Lang, ProjectWithRelations } from "@/lib/types";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
 /**
- * Category filter + staggered two-column project index.
+ * Category filter + masonry grid of cinematic project cards; video work plays in an in-page lightbox.
  * Filtering is client-side (no reload); the choice is mirrored to ?category= so it can be shared.
  * Only categories that actually contain published work appear as filters.
  */
@@ -24,7 +26,7 @@ export function WorkExplorer({
   projects: ProjectWithRelations[];
   categories: Category[];
   lang: Lang;
-  labels: { all: string; empty: string; filter: string; view: string };
+  labels: WorkLabels;
   syncUrl?: boolean;
   initialCategory?: string;
 }) {
@@ -70,6 +72,9 @@ export function WorkExplorer({
   const activeMain = active === "all" ? null : parentOf(active) ?? mains.find((c) => c.slug === active) ?? null;
   const subs = activeMain ? childrenOf(activeMain.id) : [];
   const visible = active === "all" ? projects : projects.filter((p) => slugsByProject.get(p.id)?.has(active));
+  // Projects the in-page player can show, in the same order as the grid.
+  const playable = visible.filter((p) => p.video_url && (videoEmbed(p.video_url) || isVideoFile(p.video_url)));
+  const [playing, setPlaying] = useState<number | null>(null);
 
   const pill = (slug: string, label: string, on: boolean, layoutId: string, small = false) => (
     <button
@@ -129,49 +134,39 @@ export function WorkExplorer({
       {visible.length === 0 ? (
         <p className="py-20 text-center text-ink-3">{labels.empty}</p>
       ) : (
-        <m.ul layout className="grid gap-x-10 gap-y-20 md:grid-cols-2">
-          <AnimatePresence mode="popLayout">
-            {visible.map((p, i) => {
-              const title = pick(p, "title", lang);
-              return (
-                <m.li
-                  key={p.id}
-                  layout
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.97 }}
-                  transition={{ duration: 0.6, ease: EASE, delay: Math.min(i * 0.04, 0.24) }}
-                  className={i % 2 === 1 ? "md:mt-28" : ""}
-                >
-                  <Link href={`/work/${p.slug}`} data-cursor={labels.view} className="group block">
-                    <div className="relative aspect-[4/3] overflow-hidden rounded-[20px] border border-line bg-surface">
-                      <Media
-                        src={p.thumbnail_url ?? p.hero_url}
-                        alt={title}
-                        label={title}
-                        sizes="(min-width: 768px) 50vw, 100vw"
-                        className="transition-transform duration-[1.2s] ease-[var(--ease-out)] group-hover:scale-[1.05]"
-                      />
-                    </div>
-                    <div className="mt-6 flex items-start justify-between gap-6">
-                      <div>
-                        <h3
-                          lang={pickLang(p, "title", lang)}
-                          className="font-display text-2xl font-light transition-transform duration-500 group-hover:translate-x-1.5"
-                        >
-                          {title}
-                        </h3>
-                        <p className="mt-2 line-clamp-2 text-sm text-ink-3">{pick(p, "short", lang)}</p>
-                      </div>
-                      <span className="kicker shrink-0 pt-2">{p.year}</span>
-                    </div>
-                  </Link>
-                </m.li>
-              );
-            })}
-          </AnimatePresence>
-        </m.ul>
+        // Masonry: each card keeps its own shape (portrait clip, wide video, image), so many fit on screen.
+        <ul key={active} className="columns-2 gap-3 sm:gap-4 md:columns-3 xl:columns-4">
+          {visible.map((p, i) => {
+            const videoIndex = playable.findIndex((x) => x.id === p.id);
+            return (
+              <m.li
+                key={p.id}
+                className="mb-3 break-inside-avoid sm:mb-4"
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, ease: EASE, delay: Math.min(i * 0.035, 0.4) }}
+              >
+                <ProjectCard
+                  project={p}
+                  lang={lang}
+                  index={i}
+                  labels={{ view: labels.view, watch: labels.watch }}
+                  onPlay={videoIndex >= 0 ? () => setPlaying(videoIndex) : undefined}
+                />
+              </m.li>
+            );
+          })}
+        </ul>
       )}
+
+      <ProjectLightbox
+        projects={playable}
+        index={playing}
+        onChange={setPlaying}
+        onClose={() => setPlaying(null)}
+        lang={lang}
+        labels={labels}
+      />
     </div>
   );
 }

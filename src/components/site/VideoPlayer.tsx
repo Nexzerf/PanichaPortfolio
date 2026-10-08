@@ -31,7 +31,7 @@ export function VideoPlayer({
   return (
     <div
       className={`relative overflow-hidden rounded-[20px] border border-line bg-black ${
-        vertical ? "mx-auto aspect-[9/16] w-full max-w-[420px]" : "aspect-video w-full"
+        vertical ? "mx-auto aspect-[9/16] w-full max-w-[min(420px,calc((100svh-8rem)*9/16))]" : "aspect-video w-full"
       } ${className}`}
     >
       {embed ? (

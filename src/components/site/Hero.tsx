@@ -125,8 +125,17 @@ export function Hero({
       </m.div>
 
       {/* Horizon: its own band under the content, so the glowing arc never crosses the text */}
-      <div aria-hidden className="relative h-[clamp(130px,20vh,220px)] w-full shrink-0">
-        <m.div style={{ y: planetY }} className="absolute inset-x-0 top-0 h-[200%]">
+      {/* The band reaches 8rem up to hold the glow, and a mask fades it out at the bottom,
+          so the horizon dissolves into the page instead of ending on a hard line. */}
+      <div
+        aria-hidden
+        className="pointer-events-none relative -mt-32 h-[calc(clamp(130px,20vh,220px)+8rem)] w-full shrink-0"
+        style={{
+          maskImage: "linear-gradient(to bottom, transparent 0%, #000 22%, #000 58%, transparent 100%)",
+          WebkitMaskImage: "linear-gradient(to bottom, transparent 0%, #000 22%, #000 58%, transparent 100%)",
+        }}
+      >
+        <m.div style={{ y: planetY }} className="absolute inset-x-0 top-32 h-[200%]">
           <div
             className="absolute left-1/2 top-0 aspect-square w-[260vw] -translate-x-1/2 rounded-[50%] sm:w-[200vw] lg:w-[160vw]"
             style={{

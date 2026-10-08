@@ -33,6 +33,11 @@ export const dictionary = {
   "work.empty": { th: "ยังไม่มีผลงานในหมวดนี้", en: "No projects in this category yet." },
   "work.filter": { th: "กรองตามหมวดหมู่", en: "Filter by category" },
   "work.count": { th: "โปรเจกต์", en: "projects" },
+  "work.watch": { th: "ดูคลิป", en: "Watch" },
+  "work.details": { th: "ดูรายละเอียดผลงาน", en: "View project" },
+  "work.close": { th: "ปิด", en: "Close" },
+  "work.prev": { th: "ผลงานก่อนหน้า", en: "Previous" },
+  "work.next": { th: "ผลงานถัดไป", en: "Next" },
 
   "project.year": { th: "ปี", en: "Year" },
   "project.role": { th: "บทบาท", en: "Role" },
@@ -95,3 +100,16 @@ export const contactLabels = (t: Translator) => ({
   invalid: t("contact.invalid"),
   social: t("contact.social"),
 });
+
+export const workLabels = (t: Translator) => ({
+  all: t("work.all"),
+  empty: t("work.empty"),
+  filter: t("work.filter"),
+  view: t("work.viewProject"),
+  watch: t("work.watch"),
+  details: t("work.details"),
+  close: t("work.close"),
+  prev: t("work.prev"),
+  next: t("work.next"),
+});
+export type WorkLabels = ReturnType<typeof workLabels>;

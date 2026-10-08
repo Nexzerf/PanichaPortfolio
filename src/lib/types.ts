@@ -90,6 +90,9 @@ export type Project = {
   thumbnail_url: string | null;
   hero_url: string | null;
   video_url: string | null;
+  /** Size (or just aspect) of the main video; height > width means a vertical 9:16 clip. */
+  video_width: number | null;
+  video_height: number | null;
   github_url: string | null;
   demo_url: string | null;
   external_url: string | null;

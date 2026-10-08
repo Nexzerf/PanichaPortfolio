@@ -30,7 +30,7 @@ export function CaseStudy({
   const images = p.images.filter((m) => m.kind !== "video");
   const videos = [
     ...(p.video_url && (videoEmbed(p.video_url) || isVideoFile(p.video_url))
-      ? [{ key: "main", url: p.video_url, title, caption: "", width: null, height: null }]
+      ? [{ key: "main", url: p.video_url, title, caption: "", width: p.video_width, height: p.video_height }]
       : []),
     ...p.images
       .filter((m) => m.kind === "video" && (videoEmbed(m.url) || isVideoFile(m.url)))

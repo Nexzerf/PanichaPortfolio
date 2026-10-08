@@ -100,3 +100,11 @@ export function slugify(input: string) {
     .replace(/-+/g, "-")
     .replace(/^-|-$/g, "");
 }
+
+/** Cover image for a project card: thumbnail, then hero, then the Google Drive video's own thumbnail. */
+export function projectCover(p: { thumbnail_url: string | null; hero_url: string | null; video_url: string | null }) {
+  if (p.thumbnail_url) return p.thumbnail_url;
+  if (p.hero_url) return p.hero_url;
+  const drive = p.video_url ? driveFileId(p.video_url) : null;
+  return drive ? `https://lh3.googleusercontent.com/d/${drive}=w1200` : null;
+}

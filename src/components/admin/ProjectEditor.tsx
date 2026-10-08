@@ -5,6 +5,7 @@ import { useEffect, useState, useTransition } from "react";
 import { saveProject, type ProjectImageInput } from "@/app/admin/actions";
 import { BilingualField } from "./BilingualField";
 import { MediaInput } from "./MediaInput";
+import { FramePicker } from "./FramePicker";
 import { SortableList } from "./Sortable";
 import { useToast } from "./toast";
 import { Badge, Button, Card, Field, inputCls, TextInput, Toggle } from "./ui";
@@ -226,7 +227,12 @@ export function ProjectEditor({
 
         <Card id="media" title="Media" description="Images are resized and converted to WebP before upload. Videos: upload an MP4 (max 50 MB) or add a YouTube / Vimeo / TikTok / Google Drive link. Google Drive files must be shared as “Anyone with the link”. Click the VIDEO badge to switch a clip between 16:9 and 9:16.">
           <div className="grid gap-5 md:grid-cols-2">
-            <MediaInput label="Thumbnail" value={v.thumbnail_url as string} onChange={(u) => set("thumbnail_url", u)} folder={folder} aspect="aspect-[4/3]" hint="Recommended 1600 × 1200 px (4:3). Keep the subject centred — the home page also crops it to 2:1 and 4:5." />
+            <div className="flex flex-col gap-2">
+              <MediaInput label="Thumbnail" value={v.thumbnail_url as string} onChange={(u) => set("thumbnail_url", u)} folder={folder} aspect="aspect-[4/3]" hint="Recommended 1600 × 1200 px (4:3). Keep the subject centred — the home page also crops it to 2:1 and 4:5." />
+              {Boolean(v.video_url) && (
+                <FramePicker videoUrl={v.video_url as string} folder={folder} onPicked={(u) => set("thumbnail_url", u)} />
+              )}
+            </div>
             <MediaInput label="Hero image" value={v.hero_url as string} onChange={(u) => set("hero_url", u)} folder={folder} aspect="aspect-[2/1]" hint="Recommended 2400 × 1200 px (2:1), shown at the top of the case study (cropped to 16:10 on phones). Falls back to the thumbnail." />
           </div>
           <div className="mt-6">
@@ -301,7 +307,41 @@ export function ProjectEditor({
             )}
           </div>
           <div className="mt-6">
-            <MediaInput label="Main video (MP4 upload, or YouTube / Vimeo / TikTok / Google Drive link)" kind="video" value={v.video_url as string} onChange={(u) => set("video_url", u)} folder={folder} />
+            <MediaInput
+              label="Main video (MP4 upload, or YouTube / Vimeo / TikTok / Google Drive link)"
+              kind="video"
+              value={v.video_url as string}
+              onChange={(u, meta) => {
+                set("video_url", u);
+                // New link: re-detect orientation on save (or use the uploaded file's size).
+                set("video_width", meta?.width ?? null);
+                set("video_height", meta?.height ?? null);
+              }}
+              folder={folder}
+            />
+            {Boolean(v.video_url) && (
+              <div className="mt-2 flex flex-wrap items-center gap-3 text-xs text-ink-2">
+                <span>
+                  รูปแบบคลิป:{" "}
+                  {v.video_width && v.video_height
+                    ? Number(v.video_height) > Number(v.video_width)
+                      ? "แนวตั้ง 9:16"
+                      : "แนวนอน 16:9"
+                    : "ตรวจอัตโนมัติตอนกด Save"}
+                </span>
+                <Button
+                  size="sm"
+                  variant="subtle"
+                  onClick={() => {
+                    const vertical = Number(v.video_height) > Number(v.video_width);
+                    set("video_width", vertical ? 16 : 9);
+                    set("video_height", vertical ? 9 : 16);
+                  }}
+                >
+                  ⇄ สลับแนวตั้ง / แนวนอน
+                </Button>
+              </div>
+            )}
           </div>
         </Card>
 

@@ -3,6 +3,7 @@ import { WorkExplorer } from "@/components/site/WorkExplorer";
 import { Reveal, RevealText } from "@/components/motion/Reveal";
 import { getCategories, getPublishedProjects } from "@/lib/data";
 import { getTranslator } from "@/lib/i18n/server";
+import { workLabels } from "@/lib/i18n/dictionary";
 
 export async function generateMetadata(): Promise<Metadata> {
   const { t } = await getTranslator();
@@ -34,7 +35,7 @@ export default async function WorkPage(props: PageProps<"/work">) {
           lang={lang}
           syncUrl
           initialCategory={typeof category === "string" ? category : "all"}
-          labels={{ all: t("work.all"), empty: t("work.empty"), filter: t("work.filter"), view: t("work.viewProject") }}
+          labels={workLabels(t)}
         />
       </div>
     </div>

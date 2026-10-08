@@ -3,6 +3,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { cleanPayload, requireOwner, SORTABLE_TABLES, WRITABLE, type SortableTable } from "@/lib/admin";
 import { normalizeImageUrl, slugify } from "@/lib/site";
+import { detectVideoSize } from "@/lib/video-size";
 import type { ProjectStatus } from "@/lib/types";
 
 export type ActionResult<T = undefined> = { ok: true; data?: T } | { ok: false; error: string };
@@ -57,6 +58,15 @@ export async function saveProject(id: string | null, input: ProjectInput) {
   return run(async () => {
     const { supabase } = await requireOwner();
     const row = cleanPayload("projects", input);
+    // Main video orientation: detect when the link is new or the size is unknown.
+    if (!row.video_url) {
+      row.video_width = null;
+      row.video_height = null;
+    } else if (!row.video_width || !row.video_height) {
+      const size = await detectVideoSize(String(row.video_url));
+      row.video_width = size?.width ?? null;
+      row.video_height = size?.height ?? null;
+    }
     const status = row.status as ProjectStatus | undefined;
     if (status && !["draft", "published", "archived"].includes(status)) throw new Error("Invalid status");
     if (!row.slug) {
@@ -98,7 +108,16 @@ export async function saveProject(id: string | null, input: ProjectInput) {
     }
 
     // Gallery: keep given images in the given order, drop the rest
-    const images = (input.images ?? []).filter((img) => /^https?:\/\//.test(img.url)).slice(0, 60);
+    const images = await Promise.all(
+      (input.images ?? [])
+        .filter((img) => /^https?:\/\//.test(img.url))
+        .slice(0, 60)
+        .map(async (img) => {
+          if (img.kind !== "video" || (img.width && img.height)) return img;
+          const size = await detectVideoSize(img.url);
+          return { ...img, width: size?.width ?? null, height: size?.height ?? null };
+        }),
+    );
     const keepIds = images.map((i) => i.id).filter(Boolean) as string[];
     const del = supabase.from("project_images").delete().eq("project_id", projectId);
     check(await (keepIds.length ? del.not("id", "in", `(${keepIds.join(",")})`) : del));

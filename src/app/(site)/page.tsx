@@ -17,7 +17,7 @@ import {
   getSocialLinks,
 } from "@/lib/data";
 import { getTranslator } from "@/lib/i18n/server";
-import { contactLabels } from "@/lib/i18n/dictionary";
+import { contactLabels, workLabels } from "@/lib/i18n/dictionary";
 import { pick } from "@/lib/i18n/pick";
 
 export default async function HomePage() {
@@ -134,7 +134,7 @@ export default async function HomePage() {
               projects={projects}
               categories={categories}
               lang={lang}
-              labels={{ all: t("work.all"), empty: t("work.empty"), filter: t("work.filter"), view: t("work.viewProject") }}
+              labels={workLabels(t)}
             />
           </div>
         </section>
