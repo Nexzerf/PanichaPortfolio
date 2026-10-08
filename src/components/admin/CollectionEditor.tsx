@@ -5,6 +5,7 @@ import { deleteRow, reorder, saveRow } from "@/app/admin/actions";
 import type { SortableTable } from "@/lib/admin";
 import { BilingualField } from "./BilingualField";
 import { SortableList } from "./Sortable";
+import { MediaInput } from "./MediaInput";
 import { useToast } from "./toast";
 import { Button, Field, inputCls, TextInput, Toggle, TranslationStatus } from "./ui";
 
@@ -20,7 +21,8 @@ export type FieldDef =
   | { kind: "bilingual"; name: string; label: string; multiline?: boolean; rows?: number; hint?: string }
   | { kind: "text"; name: string; label: string; type?: string; placeholder?: string; hint?: string }
   | { kind: "select"; name: string; label: string; options: { value: string; label: string }[] }
-  | { kind: "toggle"; name: string; label: string; hint?: string };
+  | { kind: "toggle"; name: string; label: string; hint?: string }
+  | { kind: "media"; name: string; label: string; media: "image" | "pdf"; hint?: string; aspect?: string; folder: string };
 
 /**
  * Generic list editor for simple tables (categories, skills, experience, awards, social links).
@@ -37,6 +39,7 @@ export function CollectionEditor({
   addLabel = "Add",
   sortable = true,
   indentKey,
+  thumbKey,
 }: {
   table: SortableTable | "translations";
   rows: Row[];
@@ -51,6 +54,8 @@ export function CollectionEditor({
   sortable?: boolean;
   /** Rows where this column is set are shown indented (e.g. subcategories). */
   indentKey?: string;
+  /** Image column shown as a small preview in each row. */
+  thumbKey?: string;
 }) {
   const router = useRouter();
   const toast = useToast();
@@ -124,6 +129,8 @@ export function CollectionEditor({
                     return <BilingualField key={f.name} label={f.label} name={f.name} values={draft} onChange={set} multiline={f.multiline} rows={f.rows} hint={f.hint} />;
                   if (f.kind === "text")
                     return <TextInput key={f.name} label={f.label} type={f.type} placeholder={f.placeholder} hint={f.hint} value={draft[f.name] as string} onChange={(x) => set(f.name, x)} />;
+                  if (f.kind === "media")
+                    return <MediaInput key={f.name} label={f.label} hint={f.hint} kind={f.media} aspect={f.aspect} folder={f.folder} value={draft[f.name] as string} onChange={(u) => set(f.name, u)} />;
                   if (f.kind === "toggle")
                     return <Toggle key={f.name} label={f.label} hint={f.hint} checked={Boolean(draft[f.name])} onChange={(x) => set(f.name, x)} />;
                   return (
@@ -145,6 +152,14 @@ export function CollectionEditor({
           ) : (
             <div className={`flex items-center gap-3 rounded-xl border border-line bg-[#070b1f] p-2 pr-3 ${indentKey && row[indentKey] ? "ml-8" : ""}`}>
               {indentKey && row[indentKey] ? <span aria-hidden className="-ml-1 text-ink-3">↳</span> : null}
+              {thumbKey && (
+                <span className="relative h-10 w-14 shrink-0 overflow-hidden rounded-md bg-surface-2">
+                  {typeof row[thumbKey] === "string" && row[thumbKey] ? (
+                    // eslint-disable-next-line @next/next/no-img-element -- small admin preview
+                    <img src={row[thumbKey] as string} alt="" className="h-full w-full object-cover" loading="lazy" />
+                  ) : null}
+                </span>
+              )}
               {sortable ? handle : <span className="w-2" />}
               <button type="button" onClick={() => open(row)} className="min-w-0 flex-1 text-left">
                 <span className="block truncate">{titleOf(row) || <em className="text-ink-3">Untitled</em>}</span>

@@ -8,6 +8,8 @@ import type { Lang, ProjectWithRelations } from "@/lib/types";
 export const isVerticalProject = (p: ProjectWithRelations) =>
   Boolean(p.video_width && p.video_height && p.video_height > p.video_width);
 
+export const isLandscapeVideo = (p: ProjectWithRelations) => Boolean(p.video_url) && !isVerticalProject(p);
+
 /**
  * Cinematic project card: the cover fills the card, title and meta sit on a gradient,
  * and hover adds a slow zoom, an accent glow and a play button for video work.
@@ -33,7 +35,8 @@ export function ProjectCard({
     : p.categories;
   const vertical = isVerticalProject(p);
   const hasVideo = Boolean(p.video_url);
-  const aspect = vertical ? "aspect-[3/4]" : hasVideo ? "aspect-video" : "aspect-[4/3]";
+  // Portrait clips and images share 3:4 on phones so pairs line up; images widen to 4:3 from tablet up.
+  const aspect = vertical ? "aspect-[3/4]" : hasVideo ? "aspect-video" : "aspect-[3/4] md:aspect-[4/3]";
 
   return (
     <Link
@@ -62,7 +65,7 @@ export function ProjectCard({
       />
 
       {/* Top badges */}
-      <div className="absolute inset-x-3 top-3 flex items-start justify-between gap-2">
+      <div className="absolute inset-x-2.5 top-2.5 flex items-start justify-between gap-2 sm:inset-x-3 sm:top-3">
         {p.year ? (
           <span className="rounded-full bg-black/55 px-2.5 py-1 font-display text-[11px] tracking-wider text-ink/90">{p.year}</span>
         ) : (
@@ -86,11 +89,14 @@ export function ProjectCard({
       )}
 
       {/* Title + categories */}
-      <div className="absolute inset-x-0 bottom-0 p-4 sm:p-5">
+      <div className="absolute inset-x-0 bottom-0 p-3 sm:p-5">
         {cats.length > 0 && (
           <p className="mb-2 flex flex-wrap gap-1.5">
-            {cats.slice(0, 2).map((c) => (
-              <span key={c.id} className="rounded-full border border-white/15 bg-black/30 px-2 py-0.5 text-[10px] tracking-wide text-ink/80">
+            {cats.slice(0, 2).map((c, k) => (
+              <span
+                key={c.id}
+                className={`rounded-full border border-white/15 bg-black/30 px-2 py-0.5 text-[10px] tracking-wide text-ink/80 ${k > 0 ? "hidden sm:inline" : ""}`}
+              >
                 {pick(c, "name", lang)}
               </span>
             ))}
@@ -98,7 +104,7 @@ export function ProjectCard({
         )}
         <h3
           lang={pickLang(p, "title", lang)}
-          className="line-clamp-2 font-display text-[1.05rem] font-medium leading-snug text-ink transition-transform duration-500 ease-[var(--ease-out)] group-hover:-translate-y-0.5 sm:text-lg"
+          className="line-clamp-2 font-display text-[0.95rem] font-medium leading-snug text-ink transition-transform duration-500 ease-[var(--ease-out)] group-hover:-translate-y-0.5 sm:text-lg"
         >
           {title}
         </h3>

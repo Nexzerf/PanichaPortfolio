@@ -1,7 +1,7 @@
 "use client";
 import { AnimatePresence, m } from "motion/react";
 import { useMemo, useState } from "react";
-import { ProjectCard } from "./ProjectCard";
+import { ProjectCard, isLandscapeVideo } from "./ProjectCard";
 import { ProjectLightbox } from "./ProjectLightbox";
 import { isVideoFile, videoEmbed } from "@/lib/site";
 import type { WorkLabels } from "@/lib/i18n/dictionary";
@@ -134,14 +134,15 @@ export function WorkExplorer({
       {visible.length === 0 ? (
         <p className="py-20 text-center text-ink-3">{labels.empty}</p>
       ) : (
-        // Masonry: each card keeps its own shape (portrait clip, wide video, image), so many fit on screen.
-        <ul key={active} className="columns-2 gap-3 sm:gap-4 md:columns-3 xl:columns-4">
+        // Phones: a 2-column grid where landscape video takes a full row and portrait cards pair up at equal height.
+        // Tablet/desktop: masonry, each card keeping its own shape, so many fit on screen.
+        <ul key={active} className="grid grid-flow-dense grid-cols-2 gap-3 md:block md:columns-3 md:gap-4 xl:columns-4">
           {visible.map((p, i) => {
             const videoIndex = playable.findIndex((x) => x.id === p.id);
             return (
               <m.li
                 key={p.id}
-                className="mb-3 break-inside-avoid sm:mb-4"
+                className={`md:mb-4 md:break-inside-avoid ${isLandscapeVideo(p) ? "col-span-2" : ""}`}
                 initial={{ opacity: 0, y: 24 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, ease: EASE, delay: Math.min(i * 0.035, 0.4) }}

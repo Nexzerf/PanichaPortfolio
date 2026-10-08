@@ -24,6 +24,10 @@ export const dictionary = {
   "section.experience": { th: "ประสบการณ์", en: "Experience" },
   "section.education": { th: "การศึกษา", en: "Education" },
   "section.awards": { th: "รางวัลและความสำเร็จ", en: "Awards & Achievements" },
+  "section.certificates": { th: "เกียรติบัตร", en: "Certificates" },
+  "cert.view": { th: "ดู", en: "View" },
+  "cert.pdf": { th: "เปิดไฟล์ PDF", en: "Open PDF" },
+  "cert.verify": { th: "ตรวจสอบ", en: "Verify" },
   "section.contact": { th: "มาทำงานด้วยกัน", en: "Let’s work together." },
   "section.interests": { th: "ความสนใจ", en: "Interests" },
 
@@ -113,3 +117,12 @@ export const workLabels = (t: Translator) => ({
   next: t("work.next"),
 });
 export type WorkLabels = ReturnType<typeof workLabels>;
+
+export const certificateLabels = (t: Translator) => ({
+  view: t("cert.view"),
+  pdf: t("cert.pdf"),
+  verify: t("cert.verify"),
+  close: t("work.close"),
+  prev: t("work.prev"),
+  next: t("work.next"),
+});

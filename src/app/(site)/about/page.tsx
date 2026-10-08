@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import { Media } from "@/components/site/Media";
 import { ImageReveal, Reveal, RevealText } from "@/components/motion/Reveal";
 import { AwardList, SectionHeader, SkillGroups, Timeline } from "@/components/site/Sections";
-import { getAwards, getExperiences, getProfile, getSiteSettings, getSkills } from "@/lib/data";
+import { getAwards, getCertificates, getExperiences, getProfile, getSiteSettings, getSkills } from "@/lib/data";
+import { CertificateGallery } from "@/components/site/CertificateGallery";
+import { certificateLabels } from "@/lib/i18n/dictionary";
 import { getTranslator } from "@/lib/i18n/server";
 import { paragraphs, pick, pickLang } from "@/lib/i18n/pick";
 
@@ -16,13 +18,14 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function AboutPage() {
-  const [{ lang, t }, settings, profile, skills, experiences, awards] = await Promise.all([
+  const [{ lang, t }, settings, profile, skills, experiences, awards, certificates] = await Promise.all([
     getTranslator(),
     getSiteSettings(),
     getProfile(),
     getSkills(),
     getExperiences(),
     getAwards(),
+    getCertificates(),
   ]);
   const name = pick(profile, "full_name", lang) || settings.site_name;
   const longBio = pick(profile, "long_bio", lang) || pick(profile, "short_bio", lang);
@@ -118,6 +121,15 @@ export default async function AboutPage() {
           <div className="container-x">
             <SectionHeader index="04" title={t("section.awards")} />
             <AwardList items={awards} lang={lang} />
+          </div>
+        </section>
+      )}
+
+      {certificates.length > 0 && (
+        <section className="section-y" aria-label={t("section.certificates")}>
+          <div className="container-x">
+            <SectionHeader index="05" title={t("section.certificates")} />
+            <CertificateGallery items={certificates} lang={lang} labels={certificateLabels(t)} />
           </div>
         </section>
       )}

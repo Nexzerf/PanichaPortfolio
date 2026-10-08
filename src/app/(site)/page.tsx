@@ -8,6 +8,7 @@ import { ImageReveal, Reveal } from "@/components/motion/Reveal";
 import { WorkExplorer } from "@/components/site/WorkExplorer";
 import {
   getAwards,
+  getCertificates,
   getCategories,
   getExperiences,
   getProfile,
@@ -17,11 +18,12 @@ import {
   getSocialLinks,
 } from "@/lib/data";
 import { getTranslator } from "@/lib/i18n/server";
-import { contactLabels, workLabels } from "@/lib/i18n/dictionary";
+import { certificateLabels, contactLabels, workLabels } from "@/lib/i18n/dictionary";
+import { CertificateGallery } from "@/components/site/CertificateGallery";
 import { pick } from "@/lib/i18n/pick";
 
 export default async function HomePage() {
-  const [{ lang, t }, settings, profile, projects, categories, skills, experiences, awards, socials] =
+  const [{ lang, t }, settings, profile, projects, categories, skills, experiences, awards, certificates, socials] =
     await Promise.all([
       getTranslator(),
       getSiteSettings(),
@@ -31,6 +33,7 @@ export default async function HomePage() {
       getSkills(),
       getExperiences(),
       getAwards(),
+      getCertificates(),
       getSocialLinks(),
     ]);
 
@@ -126,10 +129,19 @@ export default async function HomePage() {
         </section>
       )}
 
+      {certificates.length > 0 && (
+        <section id="certificates" aria-label={t("section.certificates")} className="section-y">
+          <div className="container-x">
+            <SectionHeader index="05" kicker="Certificates" title={t("section.certificates")} />
+            <CertificateGallery items={certificates} lang={lang} labels={certificateLabels(t)} />
+          </div>
+        </section>
+      )}
+
       {projects.length > 0 && (
         <section id="all-work" aria-label={t("section.allWork")} className="section-y">
           <div className="container-x">
-            <SectionHeader index="05" kicker="Archive" title={t("section.allWork")} />
+            <SectionHeader index="06" kicker="Archive" title={t("section.allWork")} />
             <WorkExplorer
               projects={projects}
               categories={categories}

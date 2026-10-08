@@ -140,6 +140,18 @@ export type Award = {
   sort_order: number;
 };
 
+export type Certificate = {
+  id: string;
+  title_th: string | null; title_en: string | null;
+  issuer_th: string | null; issuer_en: string | null;
+  description_th: string | null; description_en: string | null;
+  issued: string | null;
+  image_url: string | null;
+  file_url: string | null;
+  credential_url: string | null;
+  sort_order: number;
+};
+
 export type SocialLink = {
   id: string;
   platform: string;

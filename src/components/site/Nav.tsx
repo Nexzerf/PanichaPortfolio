@@ -66,8 +66,12 @@ export function Nav({
     return () => window.removeEventListener("keydown", onKey);
   }, [open]);
 
+  // Home: highlight the section in view. Other pages: only real page links (/work, /about) can be active —
+  // anchor links like "/#contact" point back to home, so they never match another page.
   const isActive = (item: NavItem) =>
-    pathname === "/" ? activeSection === item.section : pathname.startsWith(item.href.split("#")[0]) && item.href !== "/";
+    pathname === "/"
+      ? activeSection === item.section
+      : !item.href.includes("#") && (pathname === item.href || pathname.startsWith(`${item.href}/`));
 
   return (
     <>

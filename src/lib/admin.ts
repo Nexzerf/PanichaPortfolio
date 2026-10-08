@@ -39,6 +39,10 @@ export const WRITABLE: Record<string, readonly string[]> = {
     "period", "description_th", "description_en",
   ],
   awards: ["title_th", "title_en", "issuer_th", "issuer_en", "year", "description_th", "description_en", "project_id"],
+  certificates: [
+    "title_th", "title_en", "issuer_th", "issuer_en", "description_th", "description_en",
+    "issued", "image_url", "file_url", "credential_url",
+  ],
   social_links: ["platform", "label", "url"],
   translations: ["key", "th", "en"],
   profile: [
@@ -55,14 +59,14 @@ export const WRITABLE: Record<string, readonly string[]> = {
   ],
 };
 
-export const SORTABLE_TABLES = ["projects", "categories", "skills", "experiences", "awards", "social_links"] as const;
+export const SORTABLE_TABLES = ["projects", "categories", "skills", "experiences", "awards", "certificates", "social_links"] as const;
 export type SortableTable = (typeof SORTABLE_TABLES)[number];
 
-const IMAGE_FIELDS = new Set(["thumbnail_url", "hero_url", "og_image_url", "photo_url"]);
+const IMAGE_FIELDS = new Set(["thumbnail_url", "hero_url", "og_image_url", "photo_url", "image_url"]);
 
 const URL_FIELDS = new Set([
   "thumbnail_url", "hero_url", "video_url", "github_url", "demo_url", "external_url",
-  "og_image_url", "photo_url", "resume_url", "website", "url",
+  "og_image_url", "photo_url", "resume_url", "website", "url", "image_url", "file_url", "credential_url",
 ]);
 
 /** Keeps only whitelisted columns, trims strings, turns "" into null and rejects non-http(s) URLs. */

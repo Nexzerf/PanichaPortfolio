@@ -5,6 +5,7 @@ import { isSupabaseConfigured } from "./supabase/env";
 import type {
   Award,
   Category,
+  Certificate,
   Experience,
   Profile,
   Project,
@@ -122,6 +123,12 @@ export const getAwards = cache(async (): Promise<Award[]> => {
   if (!isSupabaseConfigured) return [];
   const { data } = await db().from("awards").select("*").order("sort_order");
   return (data as Award[]) ?? [];
+});
+
+export const getCertificates = cache(async (): Promise<Certificate[]> => {
+  if (!isSupabaseConfigured) return [];
+  const { data } = await db().from("certificates").select("*").order("sort_order");
+  return (data as Certificate[]) ?? [];
 });
 
 export const getSocialLinks = cache(async (): Promise<SocialLink[]> => {
